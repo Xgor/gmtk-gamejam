@@ -7,7 +7,12 @@ public class Player : MonoBehaviour {
 
 	public float acceleration;
 	public float friction;
-	public float groundTurnSpeed;
+
+	public float turnAcceleration;
+	public float groundTurnFriction;
+	public float airTurnFriction;
+	float currentTurnSpeed;
+
 	public float airTurnSpeed;
 	public float jetpackPower;
 	public float jetpackFuel;
@@ -44,14 +49,17 @@ public class Player : MonoBehaviour {
 			groundFire.SetActive(true);
 			Movement();
 			currentFuel = jetpackFuel;
-			transform.Rotate(Vector2.up*groundTurnSpeed*Input.GetAxis("Horizontal"));
+			currentTurnSpeed -= Mathf.Abs(currentTurnSpeed) *groundTurnFriction *Time.deltaTime;
 		}
 		else
 		{
 			groundFire.SetActive(false);
-			transform.Rotate(Vector2.up*airTurnSpeed*Input.GetAxis("Horizontal"));
+			currentTurnSpeed -= Mathf.Abs(currentTurnSpeed) *airTurnFriction *Time.deltaTime;
 		}
 
+		currentTurnSpeed += turnAcceleration * Input.GetAxis("Horizontal")*Time.deltaTime;
+
+		transform.Rotate(Vector2.up*currentTurnSpeed*Input.GetAxis("Horizontal"));
 		Jetpack();
 	}
 
